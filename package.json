@@ -1,6 +1,6 @@
 {
    "name": "xplode",
-   "description": "An application to browse the projects visually.",
+   "description": "An application to maintain npm packages in a javascript project.",
    "version": "0.1.0",
    "author": "Praveen Bisht <prvnbist@gmail.com>",
    "main": "app/background.js",
@@ -19,6 +19,7 @@
       "@emotion/react": "^11.4.1",
       "@emotion/server": "^11.4.0",
       "@emotion/styled": "^11.3.0",
+      "axios": "^0.21.4",
       "electron-serve": "^1.1.0",
       "electron-store": "^8.0.0"
    },
