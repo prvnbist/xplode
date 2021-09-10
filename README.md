@@ -1,38 +1,19 @@
-<p align="center"><img src="https://i.imgur.com/a9QWW0v.png"></p>
+## xplode
 
-## Usage
-
-### Create an App
-
-```
-# with npx
-$ npx create-nextron-app my-app --example with-typescript-tailwindcss
-
-# with yarn
-$ yarn create nextron-app my-app --example with-typescript-tailwindcss
-
-# with pnpx
-$ pnpx create-nextron-app my-app --example with-typescript-tailwindcss
-```
+An application to browse your javascript projects visually.
 
 ### Install Dependencies
 
 ```
-$ cd my-app
-
-# using yarn or npm
-$ yarn (or `npm install`)
-
-# using pnpm
-$ pnpm install --shamefully-hoist
+$ yarn
 ```
 
 ### Use it
 
 ```
 # development mode
-$ yarn dev (or `npm run dev` or `pnpm run dev`)
+$ yarn dev
 
 # production build
-$ yarn build (or `npm run build` or `pnpm run build`)
+$ yarn build
 ```
