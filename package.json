@@ -21,7 +21,8 @@
       "@emotion/styled": "^11.3.0",
       "axios": "^0.21.4",
       "electron-serve": "^1.1.0",
-      "electron-store": "^8.0.0"
+      "electron-store": "^8.0.0",
+      "react-modal": "^3.14.3"
    },
    "devDependencies": {
       "@emotion/babel-plugin": "^11.3.0",

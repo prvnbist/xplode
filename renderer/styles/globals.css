@@ -9,3 +9,21 @@
 body {
    background-color: #15202b;
 }
+
+.ReactModal__Overlay {
+   background: rgba(0, 0, 0, 0.6) !important;
+}
+
+.ReactModal__Content {
+   height: 480px;
+   width: 640px;
+   margin: 0 auto;
+   padding: 0 !important;
+}
+
+@media (max-width: 768px) {
+   .ReactModal__Content {
+      inset: 10px !important;
+      width: calc(100% - 20px);
+   }
+}
