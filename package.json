@@ -1,7 +1,7 @@
 {
    "name": "xplode",
    "description": "An application to maintain npm packages in a javascript project.",
-   "version": "0.1.0",
+   "version": "0.1.5",
    "author": "Praveen Bisht <prvnbist@gmail.com>",
    "main": "app/background.js",
    "scripts": {
@@ -22,12 +22,15 @@
       "axios": "^0.21.4",
       "electron-serve": "^1.1.0",
       "electron-store": "^8.0.0",
-      "react-modal": "^3.14.3"
+      "react-modal": "^3.14.3",
+      "react-select": "^4.3.1"
    },
    "devDependencies": {
       "@emotion/babel-plugin": "^11.3.0",
       "@types/node": "^14.14.31",
       "@types/react": "^17.0.0",
+      "@types/react-modal": "^3.12.1",
+      "@types/react-select": "^4.0.17",
       "babel-plugin-macros": "^3.1.0",
       "electron": "^13.1.7",
       "electron-builder": "^22.11.7",

@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 * {
-   color: #fff;
    box-sizing: border-box;
    font-family: 'Inter', sans-serif;
 }
@@ -15,15 +14,17 @@ body {
 }
 
 .ReactModal__Content {
-   height: 480px;
+   height: 100%;
    width: 640px;
    margin: 0 auto;
    padding: 0 !important;
+   top: 0 !important;
+   left: unset !important;
+   right: 0 !important;
 }
 
 @media (max-width: 768px) {
    .ReactModal__Content {
-      inset: 10px !important;
-      width: calc(100% - 20px);
+      width: 100%;
    }
 }
