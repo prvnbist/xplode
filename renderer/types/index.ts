@@ -22,6 +22,7 @@ export interface IPackageDetailsState {
 }
 
 export interface IPackageProps {
+   uninstallPackage: (name: string) => void
    _package: { name: string; version: string }
    setSelectedPackage: (input: { name: string; version: string }) => void
 }

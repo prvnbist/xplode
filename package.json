@@ -1,7 +1,7 @@
 {
    "name": "xplode",
    "description": "An application to maintain npm packages in a javascript project.",
-   "version": "0.1.5",
+   "version": "0.1.6",
    "author": "Praveen Bisht <prvnbist@gmail.com>",
    "main": "app/background.js",
    "scripts": {

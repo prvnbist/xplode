@@ -40,7 +40,7 @@ function Home() {
       }
    }, [path, fetch_file])
 
-   const fetch_package = async () => {
+   const fetch_package = React.useCallback(async () => {
       setPackageDetailsLoading(true)
       if (selectedPackage?.name) {
          const { success, data } = await get_package(selectedPackage.name)
@@ -54,12 +54,26 @@ function Home() {
          }
       }
       setPackageDetailsLoading(false)
-   }
+   }, [file, selectedPackage, setPackageDetails, setPackageDetailsLoading])
 
    const closeModal = () => {
       setSelectedPackage({ name: '', version: '' })
       setPackageDetails({})
    }
+
+   const uninstallPackage = React.useCallback(
+      async name => {
+         try {
+            const { success } = await uninstall_package({ path, name })
+            if (success) {
+               fetch_file(path)
+            }
+         } catch (error) {
+            console.log(error)
+         }
+      },
+      [path, fetch_file]
+   )
 
    return (
       <React.Fragment>
@@ -121,6 +135,7 @@ function Home() {
                            Dependencies
                         </h2>
                         <Packages
+                           uninstallPackage={uninstallPackage}
                            packages={file?.dependencies || {}}
                            setSelectedPackage={setSelectedPackage}
                         />
@@ -130,6 +145,7 @@ function Home() {
                            Dev Dependencies
                         </h2>
                         <Packages
+                           uninstallPackage={uninstallPackage}
                            packages={file.devDependencies || {}}
                            setSelectedPackage={setSelectedPackage}
                         />
@@ -238,6 +254,29 @@ const get_package = async name => {
          return {
             success: false,
             error: "Failed to fetch package's details.",
+         }
+      }
+   } catch (error) {
+      return { success: false, error: error.message }
+   }
+}
+
+const uninstall_package = async ({ name, path }) => {
+   try {
+      const { status, data } = await axios.post(`/api/packages/uninstall`, {
+         name,
+         path,
+      })
+      if (status === 200) {
+         if (data.success) {
+            return { success: true }
+         } else {
+            return { success: false, error: data.error }
+         }
+      } else {
+         return {
+            success: false,
+            error: 'Failed to uninstall package.',
          }
       }
    } catch (error) {
