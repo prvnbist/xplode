@@ -12,7 +12,7 @@ export const Package = ({ _package, setSelectedPackage }: IPackageProps) => {
          >
             {_package.name}
          </span>
-         <span title={_package.version} tw="text-gray-400 pr-2">
+         <span title={_package.version} tw="text-yellow-200 pr-2">
             {_package.version}
          </span>
          <button

@@ -4,6 +4,7 @@ import tw from 'twin.macro'
 import Head from 'next/head'
 import Modal from 'react-modal'
 import { ipcRenderer } from 'electron'
+import startCase from 'lodash.startcase'
 
 import * as Icon from '../assets/icons'
 import * as Illustration from '../assets/illustrations'
@@ -110,21 +111,30 @@ function Home() {
             </section>
          ) : (
             <>
-               <main tw="p-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <section>
-                     <h2 tw="mb-3 text-lg text-white">Dependencies</h2>
-                     <Packages
-                        packages={file?.dependencies || {}}
-                        setSelectedPackage={setSelectedPackage}
-                     />
-                  </section>
-                  <section>
-                     <h2 tw="mb-3 text-lg text-white">Dev Dependencies</h2>
-                     <Packages
-                        packages={file.devDependencies || {}}
-                        setSelectedPackage={setSelectedPackage}
-                     />
-                  </section>
+               <main tw="p-3">
+                  {Object.keys(file).map(key => (
+                     <Renderer key={key} field={key} value={file[key]} />
+                  ))}
+                  <div tw="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+                     <section>
+                        <h2 tw="mb-2 uppercase font-medium text-sm text-gray-500 tracking-wider">
+                           Dependencies
+                        </h2>
+                        <Packages
+                           packages={file?.dependencies || {}}
+                           setSelectedPackage={setSelectedPackage}
+                        />
+                     </section>
+                     <section>
+                        <h2 tw="mb-2 uppercase font-medium text-sm text-gray-500 tracking-wider">
+                           Dev Dependencies
+                        </h2>
+                        <Packages
+                           packages={file.devDependencies || {}}
+                           setSelectedPackage={setSelectedPackage}
+                        />
+                     </section>
+                  </div>
                </main>
                <Modal
                   onAfterClose={closeModal}
@@ -154,6 +164,44 @@ function Home() {
 }
 
 export default Home
+
+const Renderer = ({ field, value }) => {
+   if (['dependencies', 'devDependencies'].includes(field)) return null
+
+   if (typeof value === 'string')
+      return (
+         <section tw="mt-3">
+            <span tw="uppercase font-medium text-sm text-gray-500 tracking-wider">
+               {startCase(field)}:{' '}
+            </span>
+            <p tw="text-white">{value}</p>
+         </section>
+      )
+   if (typeof value === 'object') {
+      return (
+         <section tw="mt-3">
+            <span tw="uppercase font-medium text-sm text-gray-500 tracking-wider">
+               {startCase(field)}:{' '}
+            </span>
+            <ul tw="mt-2 border border-gray-700 rounded">
+               {Object.keys(value).map(
+                  key =>
+                     typeof value[key] === 'string' && (
+                        <li
+                           key={key}
+                           tw="gap-3 text-gray-400 flex px-3 h-10 items-center border-b border-gray-700 last:border-0"
+                        >
+                           <span>{key}:</span>
+                           <span tw="text-yellow-200">{value[key]}</span>
+                        </li>
+                     )
+               )}
+            </ul>
+         </section>
+      )
+   }
+   return null
+}
 
 const get_file = async path => {
    try {
