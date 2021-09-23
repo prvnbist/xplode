@@ -12,6 +12,7 @@ export const PackageModal = ({
    details,
    installed,
    closeModal,
+   fetch_file,
 }: IPackageDetailsProps) => {
    return (
       <>
@@ -37,6 +38,7 @@ export const PackageModal = ({
                      path={path}
                      name={details?.name}
                      installed={installed}
+                     fetch_file={fetch_file}
                      versions={details?.versions}
                      isDevDependency={details?.isDevDependency}
                   />
@@ -130,6 +132,7 @@ const Versions = ({
    path,
    name,
    installed,
+   fetch_file,
    isDevDependency,
    versions: _versions,
 }) => {
@@ -149,6 +152,7 @@ const Versions = ({
          if (status === 200) {
             if (data.success) {
                setLogs(data.data)
+               fetch_file(path)
             } else {
                throw new Error(data.error)
             }

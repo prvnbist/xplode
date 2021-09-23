@@ -1,5 +1,5 @@
 export interface IFileState {
-   name: string
+   name?: string
    dependencies?: {
       string: string
    }
@@ -32,4 +32,5 @@ export interface IPackageDetailsProps {
    installed: string
    closeModal: () => void
    details: IPackageDetailsState
+   fetch_file: (path: string) => void
 }

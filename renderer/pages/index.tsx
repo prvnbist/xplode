@@ -22,16 +22,22 @@ function Home() {
    const [packageDetailsLoading, setPackageDetailsLoading] =
       React.useState<boolean>(false)
 
-   React.useEffect(() => {
-      // if (path.trim()) {
-      ;(async () => {
+   const fetch_file = React.useCallback(async path => {
+      try {
          const { success, data } = await get_file(path)
          if (success) {
             setFile(data)
          }
-      })()
-      // }
-   }, [path])
+      } catch (error) {
+         console.log(error)
+      }
+   }, [])
+
+   React.useEffect(() => {
+      if (path) {
+         fetch_file(path)
+      }
+   }, [path, fetch_file])
 
    const fetch_package = async () => {
       setPackageDetailsLoading(true)
@@ -119,6 +125,7 @@ function Home() {
                   <PackageModal
                      path={path}
                      closeModal={closeModal}
+                     fetch_file={fetch_file}
                      details={packageDetails}
                      loading={packageDetailsLoading}
                      installed={selectedPackage.version}
