@@ -65,27 +65,39 @@ function Home() {
          <Head>
             <title>Home</title>
          </Head>
-         <header tw="flex items-center h-12 bg-gray-700">
+         <header tw="flex items-center justify-between h-12 border-b border-gray-700">
+            <aside tw="flex">
+               <button
+                  title="Select Project"
+                  tw="bg-green-400 ml-2 h-8 w-8 rounded flex items-center justify-center"
+                  onClick={() => {
+                     ipcRenderer
+                        .invoke('select-folder-window')
+                        .then(setPath)
+                        .catch(console.log)
+                  }}
+               >
+                  <Icon.Add size={22} tw="stroke-current text-white" />
+               </button>
+               {file?.name && (
+                  <h3
+                     title={'Project: ' + file?.name}
+                     tw="ml-3 text-lg text-white"
+                  >
+                     {file?.name}
+                  </h3>
+               )}
+            </aside>
             <button
-               title="Select Project"
-               tw="bg-gray-600 h-full w-12 flex items-center justify-center"
+               title="Close Project"
+               tw="flex-shrink-0 border border-red-400 mr-2 h-8 w-8 rounded flex items-center justify-center"
                onClick={() => {
-                  ipcRenderer
-                     .invoke('select-folder-window')
-                     .then(setPath)
-                     .catch(console.log)
+                  setFile({})
+                  setPath('')
                }}
             >
-               <Icon.Add tw="stroke-current text-white" />
+               <Icon.Close size={22} tw="stroke-current text-white" />
             </button>
-            {file?.name && (
-               <h3
-                  title={'Project: ' + file?.name}
-                  tw="ml-4 text-lg text-white"
-               >
-                  {file?.name}
-               </h3>
-            )}
          </header>
          {!path.trim() ? (
             <section tw="mt-8 flex flex-col items-center">
@@ -98,17 +110,21 @@ function Home() {
             </section>
          ) : (
             <>
-               <main tw="p-3">
-                  <h2 tw="text-lg mb-2 text-white">Dependencies</h2>
-                  <Packages
-                     packages={file?.dependencies || {}}
-                     setSelectedPackage={setSelectedPackage}
-                  />
-                  <h2 tw="text-lg mt-4 mb-1 text-white">Dev Dependencies</h2>
-                  <Packages
-                     packages={file.devDependencies || {}}
-                     setSelectedPackage={setSelectedPackage}
-                  />
+               <main tw="p-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <section>
+                     <h2 tw="mb-3 text-lg text-white">Dependencies</h2>
+                     <Packages
+                        packages={file?.dependencies || {}}
+                        setSelectedPackage={setSelectedPackage}
+                     />
+                  </section>
+                  <section>
+                     <h2 tw="mb-3 text-lg text-white">Dev Dependencies</h2>
+                     <Packages
+                        packages={file.devDependencies || {}}
+                        setSelectedPackage={setSelectedPackage}
+                     />
+                  </section>
                </main>
                <Modal
                   onAfterClose={closeModal}
