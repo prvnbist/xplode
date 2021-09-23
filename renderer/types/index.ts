@@ -1,4 +1,5 @@
 export interface IFileState {
+   name: string
    dependencies?: {
       string: string
    }
