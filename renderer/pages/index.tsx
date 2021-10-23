@@ -4,7 +4,9 @@ import tw from 'twin.macro'
 import Head from 'next/head'
 import Modal from 'react-modal'
 import { ipcRenderer } from 'electron'
+import isString from 'lodash.isstring'
 import startCase from 'lodash.startcase'
+import isPlainObject from 'lodash.isplainobject'
 
 import * as Icon from '../assets/icons'
 import * as Illustration from '../assets/illustrations'
@@ -181,9 +183,23 @@ function Home() {
 
 export default Home
 
+const isNested = input => {
+   if (!isPlainObject(input)) return false
+
+   let result = false
+
+   for (let [, value] of Object.entries(input)) {
+      if (!isString(value)) {
+         result = true
+      }
+   }
+   return result
+}
+
 const Renderer = ({ field, value }) => {
    if (['dependencies', 'devDependencies'].includes(field)) return null
 
+   if (isNested(value)) return null
    if (typeof value === 'string')
       return (
          <section tw="mt-3">
