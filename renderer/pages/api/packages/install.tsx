@@ -7,7 +7,7 @@ export default async function handler(req, res) {
          const {
             name = '',
             path = '',
-            version = '',
+            version = 'latest',
             isDevDependency = false,
          } = req.body
 
@@ -27,8 +27,6 @@ export default async function handler(req, res) {
 
          if (isDevDependency) {
             cmd += '-D'
-         } else {
-            cmd += '-S'
          }
 
          const command = `${cmd} ${name}@${version}`
@@ -36,6 +34,9 @@ export default async function handler(req, res) {
          const child = exec(command, { cwd: path })
          let output = ''
          child.stdout.on('data', data => {
+            output += data
+         })
+         child.stderr.on('data', data => {
             output += data
          })
          child.on('close', () => {
