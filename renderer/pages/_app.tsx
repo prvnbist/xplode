@@ -1,14 +1,30 @@
-import type { AppProps } from 'next/app'
-import { GlobalStyles } from 'twin.macro'
+import { AppProps } from 'next/app'
+import Head from 'next/head'
+import { MantineProvider, Global } from '@mantine/core'
 
-import '../styles/globals.css'
+import { ProjectProvider } from '../lib/projects'
 
-function App({ Component, pageProps }: AppProps) {
+export default function App(props: AppProps) {
+   const { Component, pageProps } = props
+
    return (
       <>
-         <GlobalStyles />
-         <Component {...pageProps} />
+         <Head>
+            <title>Page title</title>
+            <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+         </Head>
+
+         <MantineProvider
+            withGlobalStyles
+            withNormalizeCSS
+            theme={{
+               colorScheme: 'dark',
+            }}
+         >
+            <ProjectProvider>
+               <Component {...pageProps} />
+            </ProjectProvider>
+         </MantineProvider>
       </>
    )
 }
-export default App
