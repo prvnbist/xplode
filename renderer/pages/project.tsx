@@ -5,7 +5,8 @@ import { NextPage } from 'next'
 import { Prism } from '@mantine/prism'
 import { useRouter } from 'next/router'
 import isPlainObject from 'lodash.isplainobject'
-import { Refresh, Trash, Edit, Command, ListDetails, Package } from 'tabler-icons-react'
+import { useDebouncedValue } from '@mantine/hooks'
+import { Refresh, Trash, Edit, Command, ListDetails, Package, Plus } from 'tabler-icons-react'
 import {
    Box,
    Text,
@@ -25,6 +26,7 @@ import {
    ThemeIcon,
    Container,
    ActionIcon,
+   ScrollArea,
    Breadcrumbs,
    LoadingOverlay,
    UnstyledButton,
@@ -358,6 +360,7 @@ const PackageDetails = ({ _package, isDevDependency, fetchProject }) => {
 }
 
 const Renderer = ({ content, panel, fetchProject }) => {
+   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
    if (panel === 'Details') {
       return (
          <div>
@@ -374,24 +377,191 @@ const Renderer = ({ content, panel, fetchProject }) => {
             <ScriptsRenderer scripts={content.scripts} />
          </div>
       )
-   } else if (panel === 'Dependencies') {
+   } else if (['Dependencies', 'Dev Dependencies'].includes(panel)) {
       return (
          <div>
-            <Title order={4}>Dependencies</Title>
+            <Group>
+               <Title order={4}>{panel === 'Dependencies' ? 'Dependencies' : 'Dev Dependencies'}</Title>
+               <ActionIcon title="Add Package" variant="filled" onClick={() => setIsDrawerOpen(true)}>
+                  <Plus size={16} />
+               </ActionIcon>
+            </Group>
             <Space h="md" />
-            <DependenciesRenderer fetchProject={fetchProject} dependencies={content.dependencies} />
-         </div>
-      )
-   } else if (panel === 'Dev Dependencies') {
-      return (
-         <div>
-            <Title order={4}>Dev Dependencies</Title>
-            <Space h="md" />
-            <DependenciesRenderer fetchProject={fetchProject} dependencies={content.devDependencies} isDevDependency />
+            <DependenciesRenderer
+               fetchProject={fetchProject}
+               dependencies={panel === 'Dependencies' ? content.dependencies : content.devDependencies}
+            />
+            <Drawer position="right" opened={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} title="Add Package" padding="xl" size="xl">
+               <ScrollArea style={{ height: 'calc(100vh  - 80px' }} px={24} mx={-24}>
+                  <AddPackage fetchProject={fetchProject} type={panel === 'Dependencies' ? 'dependency' : 'devDependency'} />
+               </ScrollArea>
+            </Drawer>
          </div>
       )
    }
    return null
+}
+
+const AddPackage = ({ type, fetchProject }) => {
+   const { selectedProject } = useProjects()
+   const [search, setSearch] = React.useState('')
+   const [debounced] = useDebouncedValue(search, 400)
+   const [results, setResults] = React.useState<any[]>([])
+   const [searching, setSearching] = React.useState(false)
+   const [selectedPackage, setSelectedPackage] = React.useState(null)
+   const [selectedPackageVersions, setSelectedPackageVersions] = React.useState([])
+   const [selectedVersion, setSelectedVersion] = React.useState('')
+   const [installing, setInstalling] = React.useState(false)
+   const [logs, setLogs] = React.useState('')
+
+   React.useEffect(() => {
+      if (debounced) {
+         ;(async () => {
+            try {
+               setSearching(true)
+               setSelectedPackage(null)
+               setSelectedPackageVersions([])
+               setSelectedVersion('')
+               setLogs('')
+               const result = await axios.get('/api/packages/search?package=' + debounced)
+               if (result.status === 200) {
+                  setResults(result.data || [])
+               }
+            } catch (error) {
+               console.log('Failed to search for the package!')
+            } finally {
+               setSearching(false)
+            }
+         })()
+      }
+   }, [debounced])
+
+   React.useEffect(() => {
+      if (selectedPackage?.name) {
+         ;(async () => {
+            try {
+               const result = await get_package(selectedPackage?.name)
+               if (result.success) {
+                  setSelectedPackageVersions(result.data.versions || [])
+               }
+            } catch (error) {
+               console.log('Failed to get the package!')
+            }
+         })()
+      }
+   }, [selectedPackage])
+
+   const installPackage = async () => {
+      try {
+         setInstalling(true)
+         const { status, data } = await axios.post('/api/packages/install', {
+            version: selectedVersion,
+            name: selectedPackage?.name,
+            path: selectedProject?.path,
+            isDevDependency: type === 'devDependency',
+         })
+         if (status === 200) {
+            if (data.success) {
+               setLogs(data.data)
+               await fetchProject()
+            } else {
+               throw new Error(data.error)
+            }
+         }
+      } catch (error) {
+         console.log({ error })
+         console.log('Failed to install the package version!')
+      } finally {
+         setInstalling(false)
+      }
+   }
+
+   return (
+      <div>
+         <TextInput
+            size="md"
+            required
+            radius="md"
+            value={search}
+            label="Search Package"
+            placeholder="Search by package name"
+            onChange={e => setSearch(e.target.value)}
+         />
+         <Space h="md" />
+         {searching && (
+            <Center sx={{ width: '100%', height: '48px' }}>
+               <Loader color="yellow" size="sm" variant="dots" />
+            </Center>
+         )}
+         {!searching && results.length > 0 && (
+            <Stack
+               p={8}
+               component={ScrollArea}
+               sx={theme => ({ maxHeight: '380px', border: `1px solid ${theme.colors.dark[4]}`, borderRadius: theme.radius.md })}
+            >
+               {results.map((item, index) => (
+                  <>
+                     {index !== 0 && <Space h="xs" />}
+                     <Box
+                        px={16}
+                        py={8}
+                        pb={16}
+                        key={item.name}
+                        sx={theme => ({
+                           cursor: 'pointer',
+                           borderRadius: theme.radius.md,
+                           backgroundColor: theme.colors.dark[6],
+                           '&:hover': {
+                              backgroundColor: theme.colors.dark[5],
+                           },
+                           ...(selectedPackage?.name === item.name && {
+                              backgroundColor: theme.colors.blue[9],
+                              '&:hover': {
+                                 backgroundColor: theme.colors.blue[9],
+                              },
+                           }),
+                        })}
+                        onClick={() => setSelectedPackage(item)}
+                     >
+                        <Text>
+                           {item.name} by {isPlainObject(item.author) ? item.author.name : item.author}
+                        </Text>
+                        <Text size="sm" color="dimmed">
+                           {item.description}
+                        </Text>
+                     </Box>
+                  </>
+               ))}
+            </Stack>
+         )}
+         <Space h="md" />
+         {selectedPackage && selectedPackageVersions.length > 0 && (
+            <Select
+               label="Versions"
+               value={selectedVersion}
+               onChange={setSelectedVersion}
+               placeholder="Select a version"
+               data={selectedPackageVersions.map(version => ({ value: version, label: version }))}
+            />
+         )}
+         <Space h="xs" />
+         {selectedVersion && (
+            <Button color="pink" fullWidth loading={installing} disabled={installing} onClick={installPackage}>
+               {installing ? `Installing v${selectedVersion}` : 'Install'}
+            </Button>
+         )}
+         <Space h="sm" />
+         {selectedVersion && logs && (
+            <div>
+               <Text>Logs</Text>
+               <Space h="xs" />
+               <Prism noCopy withLineNumbers language="bash">
+                  {logs}
+               </Prism>
+            </div>
+         )}
+      </div>
+   )
 }
 
 interface MainLinkProps {
