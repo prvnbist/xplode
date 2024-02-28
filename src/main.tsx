@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { MantineProvider } from '@mantine/core'
+import { ModalsProvider } from '@mantine/modals'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 
 import { routeTree } from './routeTree.gen'
@@ -25,7 +26,9 @@ if (!rootElement.innerHTML) {
    root.render(
       <StrictMode>
          <MantineProvider theme={theme} defaultColorScheme="dark">
-            <RouterProvider router={router} />
+            <ModalsProvider>
+               <RouterProvider router={router} />
+            </ModalsProvider>
          </MantineProvider>
       </StrictMode>
    )

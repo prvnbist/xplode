@@ -15,6 +15,13 @@
          "shell": {
             "all": false,
             "open": true
+         },
+         "fs": {
+            "all": true,
+            "scope": ["**"]
+         },
+         "path": {
+            "all": true
          }
       },
       "windows": [
