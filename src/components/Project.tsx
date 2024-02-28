@@ -1,3 +1,4 @@
+import { MouseEvent } from 'react'
 import { Link } from '@tanstack/react-router'
 
 import { IconTrash } from '@tabler/icons-react'
@@ -13,13 +14,16 @@ const Project = ({ project }: { project: TProject }) => {
 
    const title = project.path.match(/[^\\\/]+$/)?.[0] ?? ''
 
-   const remove = () =>
+   const remove = (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault()
+
       modals.openConfirmModal({
          title: 'Delete Project',
          children: <Text size="sm">Are you sure you want to remove {title}?</Text>,
          labels: { confirm: 'Yes, delete', cancel: 'Cancel' },
          onConfirm: () => db.project.delete(project.id!),
       })
+   }
 
    return (
       <Paper

@@ -22,12 +22,14 @@
       "@tauri-apps/api": "^1",
       "dexie": "^3.2.5",
       "dexie-react-hooks": "^1.1.7",
+      "lodash.startcase": "^4.4.0",
       "react": "^18.2.0",
       "react-dom": "^18.2.0"
    },
    "devDependencies": {
       "@tanstack/router-vite-plugin": "^1.16.5",
       "@tauri-apps/cli": "^1",
+      "@types/lodash.startcase": "^4.4.9",
       "@types/react": "^18.2.15",
       "@types/react-dom": "^18.2.7",
       "@vitejs/plugin-react": "^4.2.1",
