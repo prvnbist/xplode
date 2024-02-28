@@ -10,6 +10,8 @@
       "tauri": "tauri"
    },
    "dependencies": {
+      "@fontsource-variable/inter": "^5.0.16",
+      "@fontsource-variable/unbounded": "^5.0.18",
       "@mantine/core": "^7.6.1",
       "@mantine/hooks": "^7.6.1",
       "@tanstack/react-router": "^1.17.4",

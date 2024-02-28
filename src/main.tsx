@@ -5,6 +5,12 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 
 import { routeTree } from './routeTree.gen'
 
+import '@fontsource-variable/inter'
+import '@fontsource-variable/unbounded'
+import '@mantine/core/styles.css'
+
+import theme from './theme'
+
 const router = createRouter({ routeTree })
 
 declare module '@tanstack/react-router' {
@@ -12,10 +18,6 @@ declare module '@tanstack/react-router' {
       router: typeof router
    }
 }
-
-import '@mantine/core/styles.css'
-
-import theme from './theme'
 
 const rootElement = document.getElementById('root')!
 if (!rootElement.innerHTML) {
