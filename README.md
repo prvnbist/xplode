@@ -1,21 +1,7 @@
-## xplode
+## Xplode 🚧
 
-A desktop application to manage your project's dependencies with an interactive interface.
+A intuitive GUI package manager built with Tauri ad React.
 
-![App Screenshot](https://media.graphcms.com/irA0OjolRVCOn8dlFpiP 'App Screenshot')
-
-### Install Dependencies
-
-```
-$ yarn
-```
-
-### Use it
-
-```
-# development mode
-$ yarn dev
-
-# production build
-$ yarn build
-```
+### Screenshots
+![](https://res.cloudinary.com/prvnbist/image/upload/v1709141564/xplode_1_s8okml.png)
+![](https://res.cloudinary.com/prvnbist/image/upload/v1709141565/xplode_2_akri3d.png)

@@ -1,55 +1,42 @@
 {
    "name": "xplode",
-   "description": "An application to maintain npm packages in a javascript project.",
-   "version": "0.1.6",
-   "author": "Praveen Bisht <prvnbist@gmail.com>",
-   "main": "app/background.js",
+   "private": true,
+   "version": "0.1.0",
+   "type": "module",
    "scripts": {
-      "dev": "nextron",
-      "build": "nextron build",
-      "build:all": "nextron build --all",
-      "build:win32": "nextron build --win --ia32",
-      "build:win64": "nextron build --win --x64",
-      "build:mac": "nextron build --mac --x64",
-      "build:linux": "nextron build --linux",
-      "postinstall": "electron-builder install-app-deps"
+      "dev": "vite",
+      "build": "tsc && vite build",
+      "preview": "vite preview",
+      "tauri": "tauri"
    },
    "dependencies": {
-      "@emotion/css": "^11.1.3",
-      "@emotion/react": "^11.4.1",
-      "@emotion/server": "^11.4.0",
-      "@emotion/styled": "^11.3.0",
-      "axios": "^0.21.4",
-      "electron-serve": "^1.1.0",
-      "electron-store": "^8.0.0",
-      "lodash.isplainobject": "^4.0.6",
-      "lodash.isstring": "^4.0.1",
+      "@fontsource-variable/inter": "^5.0.16",
+      "@fontsource-variable/unbounded": "^5.0.18",
+      "@mantine/core": "^7.6.1",
+      "@mantine/hooks": "^7.6.1",
+      "@mantine/modals": "^7.6.1",
+      "@tabler/icons-react": "^2.47.0",
+      "@tanstack/react-router": "^1.17.4",
+      "@tanstack/router-cli": "^1.16.5",
+      "@tanstack/router-devtools": "^1.17.4",
+      "@tauri-apps/api": "^1",
+      "dexie": "^3.2.5",
+      "dexie-react-hooks": "^1.1.7",
       "lodash.startcase": "^4.4.0",
-      "react-modal": "^3.14.3",
-      "react-select": "^4.3.1"
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0"
    },
    "devDependencies": {
-      "@emotion/babel-plugin": "^11.3.0",
-      "@types/node": "^14.14.31",
-      "@types/react": "^17.0.0",
-      "@types/react-modal": "^3.12.1",
-      "@types/react-select": "^4.0.17",
-      "babel-plugin-macros": "^3.1.0",
-      "electron": "^13.1.7",
-      "electron-builder": "^22.11.7",
-      "eslint": "^7.32.0",
-      "eslint-config-next": "^11.1.2",
-      "next": "^11.0.1",
-      "nextron": "^7.0.0",
-      "react": "^17.0.2",
-      "react-dom": "^17.0.2",
-      "tailwindcss": "^2.2.7",
-      "twin.macro": "^2.7.0",
-      "typescript": "^4.3.5"
-   },
-   "babelMacros": {
-      "twin": {
-         "preset": "emotion"
-      }
+      "@tanstack/router-vite-plugin": "^1.16.5",
+      "@tauri-apps/cli": "^1",
+      "@types/lodash.startcase": "^4.4.9",
+      "@types/react": "^18.2.15",
+      "@types/react-dom": "^18.2.7",
+      "@vitejs/plugin-react": "^4.2.1",
+      "postcss": "^8.4.35",
+      "postcss-preset-mantine": "^1.13.0",
+      "postcss-simple-vars": "^7.0.1",
+      "typescript": "^5.0.2",
+      "vite": "^5.0.0"
    }
 }
