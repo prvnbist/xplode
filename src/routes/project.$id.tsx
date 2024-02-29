@@ -1,8 +1,9 @@
 import startCase from 'lodash.startcase'
-import { IconArrowBack } from '@tabler/icons-react'
+import { IconArrowBack, IconArrowUpRight, IconBrandGithubFilled } from '@tabler/icons-react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 
 import { join } from '@tauri-apps/api/path'
+import { open } from '@tauri-apps/api/shell'
 import { BaseDirectory, exists, readTextFile } from '@tauri-apps/api/fs'
 
 import { Accordion, ActionIcon, Checkbox, Container, Group, Space, Table, Text, Title } from '@mantine/core'
@@ -130,6 +131,7 @@ function Project() {
 
 const Metadata = ({ content }: { content: Record<string, any> }) => {
    const keys = Object.keys(content).sort((a, b) => a.localeCompare(b))
+   const { repository = {} } = content
    return (
       <Table>
          <Table.Tbody>
@@ -150,15 +152,41 @@ const Metadata = ({ content }: { content: Record<string, any> }) => {
                   </Table.Tr>
                )
             })}
+            <Repository repository={repository} />
          </Table.Tbody>
       </Table>
+   )
+}
+
+const Repository = ({ repository }: { repository: { url: string; type: string } }) => {
+   if (!repository.url) return null
+   return (
+      <Table.Tr>
+         <Table.Td>Repository</Table.Td>
+         <Table.Td>
+            <Group gap={8}>
+               <IconBrandGithubFilled size={16} />
+               {repository.url}
+               <ActionIcon
+                  ml="auto"
+                  size="sm"
+                  variant="subtle"
+                  title="Open in browser"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => open(repository.url)}
+               >
+                  <IconArrowUpRight size={16} />
+               </ActionIcon>
+            </Group>
+         </Table.Td>
+      </Table.Tr>
    )
 }
 
 const Scripts = ({ scripts = {} }: { scripts: Record<string, string> }) => {
    const keys = Object.keys(scripts).sort((a, b) => a.localeCompare(b))
    return (
-      <Table>
+      <Table striped>
          <Table.Tbody>
             {keys.map(key => (
                <Table.Tr key={key}>
@@ -173,7 +201,7 @@ const Scripts = ({ scripts = {} }: { scripts: Record<string, string> }) => {
 
 const Dependencies = ({ deps = {} }: { deps: Record<string, string> }) => {
    return (
-      <Table>
+      <Table striped>
          <Table.Tbody>
             {Object.keys(deps).map(key => (
                <Table.Tr key={key}>
