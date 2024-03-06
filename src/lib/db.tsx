@@ -1,9 +1,6 @@
 import Dexie, { Table } from 'dexie'
 
-export interface TProject {
-   id?: number
-   path: string
-}
+import { TProject } from '../types'
 
 export class MyXplodeDB extends Dexie {
    project!: Table<TProject>

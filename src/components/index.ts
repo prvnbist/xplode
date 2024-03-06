@@ -1,1 +1,5 @@
+export { default as Dependency } from './Dependency'
+export { default as Dependencies } from './Depedencies'
+export { default as Metadata } from './Metadata'
 export { default as Project } from './Project'
+export { default as Scripts } from './Scripts'

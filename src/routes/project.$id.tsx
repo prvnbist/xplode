@@ -1,14 +1,16 @@
-import startCase from 'lodash.startcase'
-import { IconArrowBack, IconArrowUpRight, IconBrandGithubFilled } from '@tabler/icons-react'
+import { useState } from 'react'
+import { IconArrowBack } from '@tabler/icons-react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 
 import { join } from '@tauri-apps/api/path'
-import { open } from '@tauri-apps/api/shell'
 import { BaseDirectory, exists, readTextFile } from '@tauri-apps/api/fs'
 
-import { Accordion, ActionIcon, Checkbox, Container, Group, Space, Table, Text, Title } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
+import { Accordion, ActionIcon, Container, Drawer, Group, Space, Text, Title } from '@mantine/core'
 
-import { TProject, db } from '../lib/db'
+import { db } from '../lib/db'
+import { TDependency, TProject } from '../types'
+import { Dependencies, Dependency, Metadata, Scripts } from '../components'
 
 type RouteData =
    | {
@@ -66,6 +68,8 @@ export const Route = createFileRoute('/project/$id')({
 
 function Project() {
    const data = Route.useLoaderData()
+   const [opened, { open, close }] = useDisclosure(false)
+   const [dependency, setDependency] = useState<TDependency | null>(null)
 
    if (data.status === 'ERROR') {
       return (
@@ -79,6 +83,11 @@ function Project() {
             <Text>{data.message}</Text>
          </Container>
       )
+   }
+
+   const onView = (dep: TDependency) => {
+      setDependency(dep)
+      open()
    }
    return (
       <Container p={24}>
@@ -104,7 +113,7 @@ function Project() {
                <Accordion.Item value="dependencies">
                   <Accordion.Control>Dependencies</Accordion.Control>
                   <Accordion.Panel>
-                     <Dependencies deps={data.data.content.dependencies} />
+                     <Dependencies type="dependency" deps={data.data.content.dependencies} onView={onView} />
                   </Accordion.Panel>
                </Accordion.Item>
             )}
@@ -112,7 +121,7 @@ function Project() {
                <Accordion.Item value="devDependencies">
                   <Accordion.Control>Dev Dependencies</Accordion.Control>
                   <Accordion.Panel>
-                     <Dependencies deps={data.data.content.devDependencies} />
+                     <Dependencies type="devDependency" deps={data.data.content.devDependencies} onView={onView} />
                   </Accordion.Panel>
                </Accordion.Item>
             )}
@@ -120,96 +129,14 @@ function Project() {
                <Accordion.Item value="peerDependencies">
                   <Accordion.Control>Peer Dependencies</Accordion.Control>
                   <Accordion.Panel>
-                     <Dependencies deps={data.data.content.peerDependencies} />
+                     <Dependencies type="peerDependency" deps={data.data.content.peerDependencies} onView={onView} />
                   </Accordion.Panel>
                </Accordion.Item>
             )}
          </Accordion>
+         <Drawer offset={8} radius="md" opened={opened} onClose={close} position="right" title="Dependency Details">
+            {opened && dependency?.name && <Dependency dependency={dependency} />}
+         </Drawer>
       </Container>
-   )
-}
-
-const Metadata = ({ content }: { content: Record<string, any> }) => {
-   const keys = Object.keys(content).sort((a, b) => a.localeCompare(b))
-   const { repository = {} } = content
-   return (
-      <Table>
-         <Table.Tbody>
-            {keys.map(key => {
-               const value = content[key]
-               if (!['string', 'boolean'].includes(typeof value)) return null
-
-               return (
-                  <Table.Tr key={key}>
-                     <Table.Td>{startCase(key)}</Table.Td>
-                     <Table.Td>
-                        {typeof value === 'boolean' ? (
-                           <Checkbox size="xs" checked={value} onChange={() => {}} />
-                        ) : (
-                           value
-                        )}
-                     </Table.Td>
-                  </Table.Tr>
-               )
-            })}
-            <Repository repository={repository} />
-         </Table.Tbody>
-      </Table>
-   )
-}
-
-const Repository = ({ repository }: { repository: { url: string; type: string } }) => {
-   if (!repository.url) return null
-   return (
-      <Table.Tr>
-         <Table.Td>Repository</Table.Td>
-         <Table.Td>
-            <Group gap={8}>
-               <IconBrandGithubFilled size={16} />
-               {repository.url}
-               <ActionIcon
-                  ml="auto"
-                  size="sm"
-                  variant="subtle"
-                  title="Open in browser"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => open(repository.url)}
-               >
-                  <IconArrowUpRight size={16} />
-               </ActionIcon>
-            </Group>
-         </Table.Td>
-      </Table.Tr>
-   )
-}
-
-const Scripts = ({ scripts = {} }: { scripts: Record<string, string> }) => {
-   const keys = Object.keys(scripts).sort((a, b) => a.localeCompare(b))
-   return (
-      <Table striped>
-         <Table.Tbody>
-            {keys.map(key => (
-               <Table.Tr key={key}>
-                  <Table.Td>{key}</Table.Td>
-                  <Table.Td>{scripts[key]}</Table.Td>
-               </Table.Tr>
-            ))}
-         </Table.Tbody>
-      </Table>
-   )
-}
-
-const Dependencies = ({ deps = {} }: { deps: Record<string, string> }) => {
-   return (
-      <Table striped>
-         <Table.Tbody>
-            {Object.keys(deps).map(key => (
-               <Table.Tr key={key}>
-                  <Table.Td>{key}</Table.Td>
-                  <Table.Td ta="right">{deps[key]}</Table.Td>
-               </Table.Tr>
-            ))}
-         </Table.Tbody>
-      </Table>
    )
 }
